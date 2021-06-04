@@ -1,0 +1,1 @@
+insert into console (name) values ('play 4');
