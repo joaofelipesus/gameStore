@@ -7,6 +7,7 @@ import br.com.lopes.gameStore.models.Category;
 public class CategoryForm {
 
 	@NotBlank
+	
 	private String name;
 
 	public String getName() {
