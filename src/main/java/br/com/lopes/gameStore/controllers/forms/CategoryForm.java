@@ -1,8 +1,12 @@
 package br.com.lopes.gameStore.controllers.forms;
 
+import javax.validation.constraints.NotBlank;
+
 import br.com.lopes.gameStore.models.Category;
 
 public class CategoryForm {
+
+	@NotBlank
 	private String name;
 
 	public String getName() {
