@@ -2,11 +2,9 @@ package br.com.lopes.gameStore.controllers;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.lopes.gameStore.controllers.exceptions.EntityNotFoundException;
 import br.com.lopes.gameStore.controllers.forms.CategoryForm;
 import br.com.lopes.gameStore.models.Category;
 import br.com.lopes.gameStore.repositories.CategoryRepository;
+import br.com.lopes.gameStore.services.categories.CategoryFinder;
 
 @RestController
 @RequestMapping("/categories")
@@ -48,14 +46,14 @@ public class CategoriesController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Category> show(@PathVariable Long id) {
-		Category category = findCategory(id);
+		Category category = new CategoryFinder(id, categoryRepository).call();
 		return ResponseEntity.ok(category);
 	}
 
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<Category> update(@PathVariable Long id, @Valid @RequestBody CategoryForm form) {
-		Category category = findCategory(id);
+		Category category = new CategoryFinder(id, categoryRepository).call();
 		category.setName(form.getName());
 		return ResponseEntity.ok(category);
 	}
@@ -63,17 +61,9 @@ public class CategoriesController {
 	@DeleteMapping("/{id}")
 	@Transactional
 	public ResponseEntity<?> delete(@PathVariable Long id) {
-		findCategory(id);
+		new CategoryFinder(id, categoryRepository).call();
 		categoryRepository.deleteById(id);
 		return ResponseEntity.ok().build();
 	}
 
-	private Category findCategory(Long id) {
-		Optional<Category> categoryOptional = categoryRepository.findById(id);
-		if (categoryOptional.isPresent()) {
-			return categoryOptional.get();
-		} else {
-			throw new EntityNotFoundException();
-		}
-	}
 }
